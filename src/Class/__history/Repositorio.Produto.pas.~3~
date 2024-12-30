@@ -1,0 +1,50 @@
+unit Repositorio.Produto;
+
+interface
+
+uses
+  Produto.Classe, System.SysUtils, FireDAC.Comp.Client, Generics.Collections;
+
+type
+  TRepositorioProduto = class
+  private
+    FTable: TFDTable;
+  public
+    constructor Create(ATable: TFDTable);
+    function ObterPorID(ID: Integer): TProduto;
+  end;
+
+implementation
+
+{ TRepositorioProduto }
+
+constructor TRepositorioProduto.Create(ATable: TFDTable);
+begin
+  if not Assigned(ATable) then
+    raise Exception.Create('Instância de TFDTable não fornecida.');
+  FTable := ATable;
+end;
+
+function TRepositorioProduto.ObterPorID(ID: Integer): TProduto;
+begin
+  Result := nil;
+
+  FTable.Close;
+  FTable.Filter := Format('Codigo = %d', [ID]);
+  FTable.Filtered := True;
+  FTable.Open;
+
+  try
+    if not FTable.IsEmpty then
+    begin
+      Result := TProduto.Create;
+      Result.Codigo := FTable.FieldByName('Codigo').AsInteger;
+      Result.Descricao := FTable.FieldByName('Descricao').AsString;
+      Result.PrecoVenda := FTable.FieldByName('PrecoVenda').AsFloat;
+    end;
+  finally
+    FTable.Filtered := False;
+  end;
+end;
+
+end.

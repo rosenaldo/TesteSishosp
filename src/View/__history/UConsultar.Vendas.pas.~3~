@@ -1,0 +1,81 @@
+unit UConsultar.Vendas;
+unit UConsultaVendas;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Vcl.Controls, Vcl.Forms, Vcl.Grids, Vcl.DBGrids,
+  Vcl.StdCtrls, Data.DB, FireDAC.Comp.Client;
+
+type
+  TFConsultaVendas = class(TForm)
+    ECliente: TEdit;
+    LCliente: TLabel;
+    BConsultar: TButton;
+    DBGridVendas: TDBGrid;
+    DSConsultaVendas: TDataSource;
+    BFechar: TButton;
+    procedure BConsultarClick(Sender: TObject);
+    procedure BFecharClick(Sender: TObject);
+  private
+    procedure ConsultarVendas;
+  public
+    { Public declarations }
+  end;
+
+var
+  FConsultaVendas: TFConsultaVendas;
+
+implementation
+
+{$R *.dfm}
+
+uses
+  UDMVendas;
+
+procedure TFConsultaVendas.BConsultarClick(Sender: TObject);
+begin
+  ConsultarVendas;
+end;
+
+procedure TFConsultaVendas.BFecharClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TFConsultaVendas.ConsultarVendas;
+var
+  NomeParcial: String;
+begin
+  with DM_PEDIDOS_VENDAS.FDConsultaVendas do
+  begin
+    Close;
+    SQL.Clear;
+
+    if ECliente.Text <> '' then
+    begin
+      NomeParcial := '%' + ECliente.Text + '%';
+      SQL.Text :=
+        'SELECT P.Numero AS NumeroPedido, P.DataEmissao, P.ValorTotal, ' +
+        'C.Nome AS NomeCliente ' +
+        'FROM Pedido P ' +
+        'JOIN Cliente C ON P.CodigoCliente = C.Codigo ' +
+        'WHERE C.Nome LIKE :Nome OR C.Codigo = :Codigo';
+      ParamByName('Nome').AsString := NomeParcial;
+      ParamByName('Codigo').AsInteger := StrToIntDef(ECliente.Text, 0);
+    end
+    else
+    begin
+      ShowMessage('Por favor, informe o nome ou código do cliente.');
+      Exit;
+    end;
+
+    Open;
+
+    if IsEmpty then
+      ShowMessage('Nenhuma venda encontrada para o cliente informado.');
+  end;
+end;
+
+end.
+

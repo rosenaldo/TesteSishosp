@@ -1,0 +1,46 @@
+unit Repositorio.Produto;
+
+interface
+
+uses
+  Produto.Classe, System.SysUtils, FireDAC.Comp.Client, Generics.Collections;
+
+type
+  TRepositorioProduto = class
+  private
+    FQuery: TFDQuery;
+  public
+    constructor Create(AQuery: TFDQuery);
+    function ObterPorID(ID: Integer): TProduto;
+  end;
+
+implementation
+
+{ TRepositorioProduto }
+
+constructor TRepositorioProduto.Create(AQuery: TFDQuery);
+begin
+  if not Assigned(AQuery) then
+    raise Exception.Create('Instância de TFDQuery não fornecida.');
+  FQuery := AQuery;
+end;
+
+function TRepositorioProduto.ObterPorID(ID: Integer): TProduto;
+begin
+  Result := nil;
+  FQuery.Close;
+  FQuery.SQL.Text := 'SELECT Codigo, Descricao, PrecoVenda FROM Produto WHERE Codigo = :ID';
+  FQuery.ParamByName('ID').AsInteger := ID;
+  FQuery.Open;
+
+  if not FQuery.IsEmpty then
+  begin
+    Result := TProduto.Create;
+    Result.Codigo := FQuery.FieldByName('Codigo').AsInteger;
+    Result.Descricao := FQuery.FieldByName('Descricao').AsString;
+    Result.PrecoVenda := FQuery.FieldByName('PrecoVenda').AsFloat;
+  end;
+end;
+
+end.
+

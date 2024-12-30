@@ -1,0 +1,17 @@
+unit Repositorio.Inter;
+
+interface
+
+type
+  IRepositorio<T> = interface
+    ['{053F3FED-9E20-4A9B-846B-58CD9133BED5}']
+    function ObterPorID(ID: Integer): T;
+    function Listar: TList<T>;
+    procedure Inserir(Entidade: T);
+    procedure Atualizar(Entidade: T);
+    procedure Excluir(ID: Integer);
+  end;
+
+implementation
+
+end.

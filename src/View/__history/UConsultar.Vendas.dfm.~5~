@@ -1,0 +1,26 @@
+object F_CONSULTAR_VENDAS: TF_CONSULTAR_VENDAS
+  Left = 0
+  Top = 0
+  BorderStyle = bsNone
+  ClientHeight = 522
+  ClientWidth = 686
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  TextHeight = 15
+  object P_CONTAINNER: TPanel
+    Left = 0
+    Top = 0
+    Width = 686
+    Height = 522
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 0
+    StyleElements = []
+    ExplicitWidth = 670
+    ExplicitHeight = 483
+  end
+end

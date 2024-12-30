@@ -1,0 +1,52 @@
+unit Cliente.Classe;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Generics.Collections, FireDAC.Comp.Client;
+
+type
+  TCliente = class
+  private
+    FCodigo: Integer;
+    FNome: String;
+    FCidade: String;
+    FUF: String;
+  public
+    property Codigo: Integer read FCodigo write FCodigo;
+    property Nome: String read FNome write FNome;
+    property Cidade: String read FCidade write FCidade;
+    property UF: String read FUF write FUF;
+
+    class function ObterPorCodigo(const Codigo: Integer; Connection: TFDConnection): TCliente;
+  end;
+
+implementation
+
+class function TCliente.ObterPorCodigo(const Codigo: Integer; Connection: TFDConnection): TCliente;
+var
+  Query: TFDQuery;
+begin
+  Result := nil;
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := Connection;
+    Query.SQL.Text := 'SELECT Codigo, Nome, Cidade, UF FROM Cliente WHERE Codigo = :Codigo';
+    Query.ParamByName('Codigo').AsInteger := Codigo;
+    Query.Open;
+
+    if not Query.IsEmpty then
+    begin
+      Result := TCliente.Create;
+      Result.Codigo := Query.FieldByName('Codigo').AsInteger;
+      Result.Nome := Query.FieldByName('Nome').AsString;
+      Result.Cidade := Query.FieldByName('Cidade').AsString;
+      Result.UF := Query.FieldByName('UF').AsString;
+    end;
+  finally
+    Query.Free;
+  end;
+end;
+
+end.
+
